@@ -5,7 +5,7 @@ Intro::Intro()
 {
     f1.loadFromFile("./resources/Expo.ttf", 40);
     f2.loadFromFile("./resources/Expo.ttf", 26);
-    title.loadFromRenderedText("Wellcome to Snake", f1, SDL_Color{0,0,0,0x0});
+    title.loadFromRenderedText("Welcome to Snake", f1, SDL_Color{0,0,0,0x0});
     subtitle.loadFromRenderedText("Press any key to continue...", f2, SDL_Color{0,0,0,0});
 
     background.loadFromFile("./resources/background.png");

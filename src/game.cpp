@@ -12,7 +12,7 @@ Game::Game() : background()
 {
     background.loadFromFile("./resources/background.png");
     font4TitleLost.loadFromFile("./resources/Expo.ttf", 40);
-    titleLost.loadFromRenderedText("You have lost the game", font4TitleLost, SDL_Color{0,0,0,0x0});
+    titleLost.loadFromRenderedText("You have lost", font4TitleLost, SDL_Color{0,0,0,0x0});
 
     // create snake ==============================
     // create snake's head
