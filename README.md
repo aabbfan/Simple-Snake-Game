@@ -1,6 +1,6 @@
 # Simple Snake Game
 
-This is a simple snake game witch written with C++ and SDL2.
+This is a simple snake game which written with C++ and SDL2.
 
 ## How to compile it
 mkdir build
