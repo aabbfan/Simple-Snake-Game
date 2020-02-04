@@ -3,12 +3,12 @@
 This is a simple snake game which written with C++ and SDL2.
 
 ## How to compile it
-mkdir build
-cd build
-cmake ..
-make
-cd ..
-./snake
+1. mkdir build
+2. cd build
+3. cmake ..
+4. make
+5. cd ..
+6 ./snake
 
 ## What is the game look like
 ![avatar][screenShot]
