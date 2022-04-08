@@ -1,29 +1,20 @@
 #ifndef LISTENER_H_
 #define LISTENER_H_
 
-#include <vector>
-
-enum ListenEventType
-{
-    checkCollision,
-    collideWall,
-    addOnCheckCollisonObject,
-    collideFood,
-    removeOnCheckCollisionObject,
-    gameOver
-};
+#include <memory>
 
 class Object;
-class Listener
+class Listener : public std::enable_shared_from_this<Listener>
 {
 public:
     Listener();
+    void attach(std::shared_ptr<Object> object);
     virtual ~Listener() = default;
 
-    void notify(ListenEventType e, std::vector<void*> argv);
-    virtual bool isAccept(ListenEventType e) noexcept;
-    virtual void work(ListenEventType e, std::vector<void*> argv);
+    virtual void update();
+
+protected:
+    std::shared_ptr<Object> object;
 };
 
-extern std::vector<Listener*> g_ListenerList;
 #endif

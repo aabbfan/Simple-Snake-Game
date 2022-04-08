@@ -1,42 +1,27 @@
 #include "audioListener.h"
+#include "music.h"
 
-AudioListener* AudioListener::ptr_audioListener = nullptr;
-
-AudioListener::AudioListener()
-              : eat("./resources/eat.wav"), lost("./resources/lost.wav")
+AudioListener::AudioListener(AudioType type) : Listener()
 {
-
+    switch(type)
+    {
+    case AUDIO_TYPE_EAT:
+        sound = new Sound("./resources/eat.wav");
+        break;
+    case AUDIO_TYPE_LOST:
+        sound = new Sound("./resources/lost.wav");
+    default:
+        break;
+    }
 }
 
 AudioListener::~AudioListener()
 {
+    delete sound;
 }
 
-AudioListener* AudioListener::getInstance()
+void AudioListener::update()
 {
-    if (AudioListener::ptr_audioListener == nullptr)
-    {
-        AudioListener::ptr_audioListener = new AudioListener();
-    }
-    return AudioListener::ptr_audioListener;
+    sound->play();
 }
 
-bool AudioListener::isAccept(ListenEventType e) noexcept
-{
-    if (e == ListenEventType::collideFood) return true;
-    if (e == ListenEventType::collideWall) return true;
-    return false;
-}
-
-void AudioListener::work(ListenEventType e, std::vector<void*> argv)
-{
-    if (e == ListenEventType::collideFood)
-    {
-        eat.play();
-    }
-
-    if (e == ListenEventType::collideWall)
-    {
-        lost.play();
-    }
-}

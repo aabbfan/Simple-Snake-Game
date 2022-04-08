@@ -1,30 +1,30 @@
 #include "collisionListener.h"
 #include "object.h"
+#include "food.h"
 #include "mainwindow.h"
+#include "game.h"
 
-CollisionListener* CollisionListener::coll = new CollisionListener();
-
-CollisionListener::CollisionListener() : Listener()
+CollisionListener::CollisionListener(Game* _game) : Listener(), game(_game)
 {
 }
 
-void CollisionListener::addOnCheckObject(Object* obj)
+void CollisionListener::addOnCheckObject(std::shared_ptr<Object> obj)
 {
-    if (obj == nullptr) return;
+    if (!obj) return;
     for (auto i : onCheckObjects)
     {
-        if (i == obj) return;
+        if ( i->getID() == obj->getID()) return;
     }
     
     onCheckObjects.push_back(obj);
 }
 
-void CollisionListener::removeCheckObject(Object* obj)
+void CollisionListener::removeCheckObject(std::shared_ptr<Object> obj)
 {
-    if (obj == nullptr) return;
+    if (!obj) return;
     for (auto it = onCheckObjects.begin(); it != onCheckObjects.end(); it++)
     {
-        if (*it == obj)
+        if ((*it)->getID() == obj->getID())
         {
             onCheckObjects.erase(it);
             return;
@@ -32,16 +32,7 @@ void CollisionListener::removeCheckObject(Object* obj)
     }
 }
 
-CollisionListener* CollisionListener::getInstance()
-{
-    if (coll == nullptr)
-    {
-        coll = new CollisionListener();
-    }
-    return coll;
-}
-
-void CollisionListener::checkCollide(Object* obj)
+void CollisionListener::checkCollide(std::shared_ptr<Object> obj)
 {
     if (obj == nullptr) return;
 
@@ -52,13 +43,14 @@ void CollisionListener::checkCollide(Object* obj)
         if (i == obj) continue; 
         if (isCollide(i, obj) == true)
         {
-            notify(ListenEventType::collideFood, { i });
+            std::shared_ptr<Food> tmp = std::dynamic_pointer_cast<Food>(i);
+            game->snakeCollideFood(tmp);
             break;
         }
     }
 }
 
-void CollisionListener::checkCollideWall(Object* obj)
+void CollisionListener::checkCollideWall(std::shared_ptr<Object> obj)
 {
     bool tmp_ = false;
     if (obj->getPos().x <= 0 || obj->getPos().x >= mainwindow->getWidth())
@@ -73,11 +65,11 @@ void CollisionListener::checkCollideWall(Object* obj)
     
     if (tmp_ == true)
     {
-        notify(ListenEventType::collideWall, { });
+        game->setGameLost();
     }
 }
 
-bool CollisionListener::isCollide(Object* obj_1, Object* obj_2)
+bool CollisionListener::isCollide(std::shared_ptr<Object> obj_1, std::shared_ptr<Object> obj_2)
 {
     int distance = 0;
     
@@ -98,49 +90,9 @@ bool CollisionListener::isCollide(Object* obj_1, Object* obj_2)
     return false;
 }
 
-bool CollisionListener::isAccept(ListenEventType e) noexcept
+void CollisionListener::update()
 {
-    if (e == checkCollision)
-    {
-        return true;
-    }
-    
-    if (e == addOnCheckCollisonObject)
-    {
-        return true;
-    }
-
-    if (e == removeOnCheckCollisionObject) return true;
-
-    if (e == gameOver) return true;
-
-    return false;
-}
-
-void CollisionListener::work(ListenEventType e, std::vector<void*> argv)
-{
-    if (e == ListenEventType::checkCollision && argv.size() == 1)
-    {
-        Object* tmp_ = (Object*)argv[0];
-        checkCollide(tmp_);
-    }
-
-    if (e == ListenEventType::addOnCheckCollisonObject && argv.size() == 1)
-    {
-        Object* tmp_ = (Object*)argv[0];
-        addOnCheckObject(tmp_);
-    }
-
-    if (e == ListenEventType::removeOnCheckCollisionObject && argv.size() == 1)
-    {
-        Object* tmp_ = (Object*)argv[0];
-        removeCheckObject(tmp_);
-    }
-
-    if (e == ListenEventType::gameOver && argv.empty())
-    {
-        clearData();
-    }
+    checkCollide(object);
 }
 
 void CollisionListener::clearData()

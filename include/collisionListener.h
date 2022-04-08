@@ -2,27 +2,29 @@
 #define COLLISIONLISTENER_H_
 #include "listener.h"
 #include <list>
+#include <memory>
 
+class Object;
+class Game;
 class CollisionListener : public Listener
 {
 public:
-    CollisionListener();
+    CollisionListener(Game* _game);
     ~CollisionListener() = default;
     
-    void checkCollide(Object* obj);
-    void addOnCheckObject(Object* obj);
-    void removeCheckObject(Object* obj);
+    void checkCollide(std::shared_ptr<Object> obj);
+    void addOnCheckObject(std::shared_ptr<Object> obj);
+    void removeCheckObject(std::shared_ptr<Object> obj);
 
-    virtual bool isAccept(ListenEventType e) noexcept override;
-    virtual void work(ListenEventType e, std::vector<void*> argv) override;
-    static CollisionListener* getInstance();
+    virtual void update() override;
 private:
-    std::list<Object*> onCheckObjects;
-    static CollisionListener* coll;
+    std::list<std::shared_ptr<Object>> onCheckObjects;
 
-    bool isCollide(Object* obj_1, Object* obj_2);
-    void checkCollideWall(Object* obj);
+    bool isCollide(std::shared_ptr<Object> obj_1, std::shared_ptr<Object> obj_2);
+    void checkCollideWall(std::shared_ptr<Object> obj);
     void clearData();
+
+    Game* game;
 };
 
 #endif

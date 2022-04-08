@@ -1,27 +1,18 @@
 #include "listener.h"
+#include "object.h"
 
 Listener::Listener()
 {
-    g_ListenerList.push_back(this);
+
 }
 
-bool Listener::isAccept(ListenEventType e) noexcept
+void Listener::update()
 {
-    return false;
+    
 }
 
-void Listener::work(ListenEventType e, std::vector<void*> argv)
+void Listener::attach(std::shared_ptr<Object> _object)
 {
-
+    this->object = _object;
+    this->object->attach(shared_from_this());
 }
-
-void Listener::notify(ListenEventType e, std::vector<void*> argv)
-{
-    for (auto i : g_ListenerList)
-    {
-        if (i->isAccept(e) == false) continue;
-        i->work(e, argv);
-    }
-}
-
-std::vector<Listener*> g_ListenerList = { };

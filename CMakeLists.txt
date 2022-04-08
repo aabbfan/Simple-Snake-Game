@@ -29,7 +29,6 @@ set(SOURCES
 	src/utils.cpp
 	src/listener.cpp
 	src/collisionListener.cpp
-	src/gameListener.cpp
 	src/food.cpp
 	src/music.cpp
 	src/audioListener.cpp

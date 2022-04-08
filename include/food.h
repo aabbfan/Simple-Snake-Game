@@ -3,7 +3,8 @@
 
 #include "object.h"
 #include <string>
-class Food : public Object
+class AudioListener;
+class Food : public Object, public std::enable_shared_from_this<Food>
 {
 public:
     Food();
@@ -11,6 +12,5 @@ public:
     
     static const std::string foodTexturePath;
 private:
-    
 };
 #endif

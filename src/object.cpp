@@ -1,11 +1,11 @@
 #include "object.h"
-#include "collisionListener.h"
-#include <iostream>
+#include "listener.h"
 
 Object::Object(int _x, int _y)
         : position{_x, _y}
 {
-
+    static int tmp_id = 0;
+    id = ++tmp_id;
 }
 
 void Object::setTex(const std::string& path)
@@ -39,32 +39,25 @@ int Object::getRadius() noexcept
     return radius;
 }
 
-void Object::notify(ObjectEvent e)
+void Object::notify()
 {
-    if (e == Object_moved)
+    for (auto i : listeners)
     {
-        for (auto i : g_ListenerList)
-        {
-            if (i->isAccept(checkCollision) == false) continue;
-            i->work(ListenEventType::checkCollision, { (void*)this });
-        }
+        i->update();
     }
+}
 
-    if (e == Object_show)
-    {
-        for (auto i : g_ListenerList)
-        {
-            if (i->isAccept(addOnCheckCollisonObject) == false) continue;
-            i->work(ListenEventType::addOnCheckCollisonObject, { (void*)this });
-        }
-    }
+void Object::attach(std::shared_ptr<Listener> listener)
+{
+    listeners.push_back(listener);
+}
 
-    if (e == Object_disppear)
-    {
-        for (auto i : g_ListenerList)
-        {
-            if (i->isAccept(removeOnCheckCollisionObject) == false) continue;
-            i->work(ListenEventType::removeOnCheckCollisionObject, { (void*)this });
-        }
-    }
+unsigned int Object::getID()
+{
+    return id;
+}
+
+void Object::setRadius(int _radius)
+{
+    radius = _radius;
 }

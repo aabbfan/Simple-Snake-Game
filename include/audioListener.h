@@ -1,21 +1,23 @@
 #ifndef AUDIOLISTENER_H_
 #define AUDIOLISTENER_H_
 #include "listener.h"
-#include "music.h"
+
+class Sound;
+enum AudioType
+{
+    AUDIO_TYPE_EAT = 0,
+    AUDIO_TYPE_LOST
+};
 
 class AudioListener : public Listener
 {
 public:
-    AudioListener();
+    AudioListener(AudioType type);
     ~AudioListener();
 
-    static AudioListener* getInstance();
-    virtual bool isAccept(ListenEventType e) noexcept override;
-    virtual void work(ListenEventType e, std::vector<void*> argv) override;
+    virtual void update();
+    
 private:
-    Sound eat;
-    Sound lost;
-
-    static AudioListener* ptr_audioListener;
+    Sound* sound;
 };
 #endif

@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "exception.h"
-#include "audioListener.h"
 
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -47,7 +46,6 @@ MainWindow::MainWindow(int w, int h, const std::string& title)
     res = Mix_OpenAudio( 44100, MIX_DEFAULT_FORMAT, 2, 2048 );
     if (res < 0)
         throw SDLException(std::string("SDL_mixer could not initialize! SDL_mixer Error: ") + Mix_GetError());
-    AudioListener::getInstance();
 
     mainwindow = this;
 }

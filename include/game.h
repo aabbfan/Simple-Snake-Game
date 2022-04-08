@@ -15,6 +15,9 @@ enum GameResultType
 
 class Node;
 class Food;
+class CollisionListener;
+class AudioListener;
+class Object;
 class Game : public GameState
 {
 public:
@@ -32,13 +35,13 @@ public:
 
     void setGameLost();
     void addFood();
-    void snakeCollideFood(Food* _food);
+    void snakeCollideFood(std::shared_ptr<Food> _food);
 private:
     Texture background;  // backgroud of the game
     Texture titleLost;  // be shown on the screen after player won or failed the game
     Font font4TitleLost;
     std::list<Node*> snake;
-    std::list<Food*> food;
+    std::list<std::shared_ptr<Food>> food;
     GameResultType gameResult;
 
     int speed;
@@ -55,6 +58,14 @@ private:
     Pos calculateNextHeadPos(Pos head_pos);
     void handleOperatingEvents(SDL_Event e);
     virtual void controlFPS();
+
+    // listeners
+    std::shared_ptr<AudioListener> foodSoundListener;
+    std::shared_ptr<AudioListener> lostSoundListener;
+    std::shared_ptr<CollisionListener> collisionListener;
+
+    std::shared_ptr<Object> lostGameAudio;
+    std::shared_ptr<Object> fakeHead; // to check if the snake bump into foods
 };
 
 #endif

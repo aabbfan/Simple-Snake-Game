@@ -2,11 +2,13 @@
 #include "mainwindow.h"
 #include "node.h"
 #include "food.h"
-#include "gameListener.h"
+#include "collisionListener.h"
+#include "audioListener.h"
 #include <SDL.h>
 #include <cmath>
 #include <cstdlib>
 #include <iostream>
+#include <memory>
 
 Game::Game() : background()
 {
@@ -19,6 +21,9 @@ Game::Game() : background()
     Node* head = new Node(mainwindow->windowMiddleX, mainwindow->windowMiddleY, purple);
     head->setHead();
     snake.push_back(head);
+    fakeHead = std::make_shared<Object>(mainwindow->windowMiddleX,mainwindow->windowMiddleY);
+    fakeHead->setRadius(head->getRadius());
+
 
     speed = 1;
     direction = 90;
@@ -26,18 +31,20 @@ Game::Game() : background()
     for (int i = 0; i < 5; i++) snakeIncrease();
     // ===============================================
 
-    GameListener::getInstance()->bindGame(this);
+    collisionListener = std::make_shared<CollisionListener>(this);
+    collisionListener->attach(fakeHead);
+    lostGameAudio = std::make_shared<Object>(0, 0);
+    lostSoundListener = std::make_shared<AudioListener>(AUDIO_TYPE_LOST);
+    lostSoundListener->attach(lostGameAudio);
+    
+    foodSoundListener = std::make_shared<AudioListener>(AUDIO_TYPE_EAT);
+
     gameResult = GameResultType::gaming;
 }
 
 Game::~Game()
 {
     for (auto i : snake)
-    {
-        delete i;
-    }
-
-    for (auto i : food)
     {
         delete i;
     }
@@ -65,6 +72,11 @@ void Game::logic()
     {
         snakeMove();
         addFood();
+    }
+    
+    if (gameResult == GameResultType::lost)
+    {
+        lostGameAudio->notify();
     }
 }
 
@@ -115,7 +127,7 @@ void Game::snakeMove()
     delete *it;
     snake.pop_back();   // delete the last node
                         // so the snake moves
-    snake.front()->notify(Object_moved);    // notify listeners snake moves
+    fakeHead->notify();
 }
 
 void Game::handleOperatingEvents(SDL_Event e)
@@ -151,6 +163,9 @@ void Game::snakeIncrease()
     // calculate the position of snake's head
     auto it = snake.begin();
     Pos new_head_pos = calculateNextHeadPos((*it)->getPos());
+
+    // update fake head
+    fakeHead->setPos(new_head_pos);
 
     // push a dummy at last of que first
     Node* dummy = new Node(new_head_pos.x, new_head_pos.y, purple);
@@ -219,23 +234,24 @@ void Game::addFood()
 
     if (rand_num >= 39)
     {
-        Food* tmp_ = new Food();
+        std::shared_ptr<Food> tmp_ = std::make_shared<Food>();
+        tmp_->attach(foodSoundListener);
+        collisionListener->addOnCheckObject(tmp_);
         food.push_back(tmp_);
-        tmp_->notify(ObjectEvent::Object_show);
     }
 }
 
-void Game::snakeCollideFood(Food* _food)
+void Game::snakeCollideFood(std::shared_ptr<Food> _food)
 {
     snakeIncrease();    // increase the snake
     
-    // romve the food
+    // remove the food
     for (auto it = food.begin(); it != food.end(); it++)
     {
-        if (*it == _food)
+        if ((*it)->getID() == _food->getID())
         {
-            _food->notify(ObjectEvent::Object_disppear);
-            delete _food;
+            (*it)->notify();
+            collisionListener->removeCheckObject(*it);
             food.erase(it);
             break;
         }
