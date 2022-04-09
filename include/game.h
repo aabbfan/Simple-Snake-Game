@@ -43,6 +43,9 @@ private:
     std::list<Node*> snake;
     std::list<std::shared_ptr<Food>> food;
     GameResultType gameResult;
+    unsigned int score;
+    Texture scoreDisplay;
+    Font font4ScoreDisplay;
 
     int speed;
 
@@ -58,6 +61,7 @@ private:
     Pos calculateNextHeadPos(Pos head_pos);
     void handleOperatingEvents(SDL_Event e);
     virtual void controlFPS();
+    void scoreRender();
 
     // listeners
     std::shared_ptr<AudioListener> foodSoundListener;

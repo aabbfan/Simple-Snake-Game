@@ -10,12 +10,13 @@
 #include <iostream>
 #include <memory>
 
-Game::Game() : background()
+Game::Game() : background(), score(0)
 {
-    background.loadFromFile("./resources/background.png");
+    background.loadFromFile("./resources/background_transparent.png");
     font4TitleLost.loadFromFile("./resources/Expo.ttf", 40);
     titleLost.loadFromRenderedText("You have lost", font4TitleLost, SDL_Color{0,0,0,0x0});
 
+    font4ScoreDisplay.loadFromFile("./resources/Purisa-BoldOblique.ttf", 15);
     // create snake ==============================
     // create snake's head
     Node* head = new Node(mainwindow->windowMiddleX, mainwindow->windowMiddleY, purple);
@@ -89,6 +90,7 @@ void Game::render()
 
     snakeRender();
     foodRender();
+    scoreRender();
 
     if (gameResult == GameResultType::lost) lostRender();  
     mainwindow->update();
@@ -245,6 +247,7 @@ void Game::addFood()
 void Game::snakeCollideFood(std::shared_ptr<Food> _food)
 {
     snakeIncrease();    // increase the snake
+    score++; // nice!
     
     // remove the food
     for (auto it = food.begin(); it != food.end(); it++)
@@ -257,4 +260,12 @@ void Game::snakeCollideFood(std::shared_ptr<Food> _food)
             break;
         }
     }
+}
+
+void Game::scoreRender()
+{
+    std::string display = "Score: " + std::to_string(score);
+    scoreDisplay.loadFromRenderedText(display, font4TitleLost, SDL_Color{0,0,0,0x0});
+
+    scoreDisplay.render(10, 10);
 }
