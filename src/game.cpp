@@ -48,6 +48,7 @@ Game::~Game()
     {
         delete i;
     }
+    collisionListener->clearData();
 }
 
 void Game::handle_events()

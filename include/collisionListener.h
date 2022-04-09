@@ -17,12 +17,12 @@ public:
     void removeCheckObject(std::shared_ptr<Object> obj);
 
     virtual void update() override;
+    void clearData();
 private:
     std::list<std::shared_ptr<Object>> onCheckObjects;
 
     bool isCollide(std::shared_ptr<Object> obj_1, std::shared_ptr<Object> obj_2);
     void checkCollideWall(std::shared_ptr<Object> obj);
-    void clearData();
 
     Game* game;
 };

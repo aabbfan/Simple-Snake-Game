@@ -43,13 +43,14 @@ void Object::notify()
 {
     for (auto i : listeners)
     {
-        i->update();
+        i.lock()->update();
     }
 }
 
 void Object::attach(std::shared_ptr<Listener> listener)
 {
-    listeners.push_back(listener);
+    std::weak_ptr tmp(listener);
+    listeners.push_back(tmp);
 }
 
 unsigned int Object::getID()

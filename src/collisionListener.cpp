@@ -92,7 +92,7 @@ bool CollisionListener::isCollide(std::shared_ptr<Object> obj_1, std::shared_ptr
 
 void CollisionListener::update()
 {
-    checkCollide(object);
+    checkCollide(object.lock());
 }
 
 void CollisionListener::clearData()

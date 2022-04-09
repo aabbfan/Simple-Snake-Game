@@ -14,7 +14,7 @@ public:
     virtual void update();
 
 protected:
-    std::shared_ptr<Object> object;
+    std::weak_ptr<Object> object;
 };
 
 #endif

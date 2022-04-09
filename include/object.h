@@ -32,7 +32,7 @@ private:
     int radius;
     unsigned int id;
 
-    std::vector<std::shared_ptr<Listener>> listeners;
+    std::vector<std::weak_ptr<Listener>> listeners;
 };
 
 #endif
